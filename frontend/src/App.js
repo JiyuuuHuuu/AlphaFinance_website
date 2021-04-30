@@ -99,6 +99,7 @@ function App() {
   const [checkEntertainment, setCheckEntertainment] = React.useState(false);
   const [selectedStock, setSelectedStock] = React.useState("");
   const [listOfStock, setListOfStock] = React.useState(sampleListOfStock);
+  const [listOfIndustry, setListOfIndustry] = React.useState(sampleListOfStock);
   const [recommendStock, setRecommendStock] = React.useState(sampleRecommendStock);
   const [inputUsername, setInputUsername] = React.useState("");
   const [inputPassword, setInputPassword] = React.useState("");
@@ -269,7 +270,7 @@ function App() {
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                       }
-                      label="Publishing"
+                      label="Airlines"
                     />
                   </ListItem>
                   <ListItem button className={classes.nested}>
@@ -281,7 +282,7 @@ function App() {
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                       }
-                      label="Entertainment"
+                      label="Insurance-Life"
                     />
 
                   </ListItem>
@@ -299,15 +300,9 @@ function App() {
           {listOfStock.map(item => {
             return (
               <ListItem button onClick={()=>{setSelectedStock(item.symbol)}}>
-                {item.symbol + "(" + item.company + ")"}
-                {"Today's price:" + item.Price}
-                {item.ListOfHistoryPrice.map(historyItem => {
-                  return (
-                    <ListItem>
-                      {historyItem.price}
-                    </ListItem>
-                  )
-                })}
+                {" Symbol: " + item.symbol}
+                {" Industry: " + item.industry}
+                {" Price: " + item.market_price}
               </ListItem>
             )
           })}
