@@ -81,6 +81,7 @@ app.get('/search', (req, res) => {
 
 })
 
-app.listen(4000, ()=>{
-  console.log("backend listening on 4000")
+const PORT = process.env.PORT || 4000
+app.listen(PORT, ()=>{
+  console.log("backend listening on", PORT)
 })
