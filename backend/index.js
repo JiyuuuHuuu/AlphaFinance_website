@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors())
+app.use(express.static(__dirname + '/public'));
 
 //TODO: you need to configure how to connect to DB here.
 
