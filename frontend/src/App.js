@@ -21,7 +21,8 @@ import Grid from '@material-ui/core/Grid';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Icon from '@material-ui/core/Icon';
-
+import { LineChart, PieChart } from 'react-chartkick'
+import 'chartkick/chart.js'
 
 
 function App() {
@@ -99,6 +100,8 @@ function App() {
   const [checkEntertainment, setCheckEntertainment] = React.useState(false);
   const [selectedStock, setSelectedStock] = React.useState("");
   const [listOfStock, setListOfStock] = React.useState(sampleListOfStock);
+  const [listOfHistory, setListOfHistory] = React.useState(sampleListOfStock);
+  const [listOfIndustry, setListOfIndustry] = React.useState(sampleListOfStock);
   const [recommendStock, setRecommendStock] = React.useState(sampleRecommendStock);
   const [inputUsername, setInputUsername] = React.useState("");
   const [inputPassword, setInputPassword] = React.useState("");
@@ -181,7 +184,7 @@ function App() {
     .then(resp => resp.json()).then(resp=>{
         setListOfStock(resp.message)
     }).catch(err=>console.log(err))
-  }
+  };
 
 
   var handleVisit = () =>{
@@ -190,7 +193,14 @@ function App() {
         setRecentView(resp.message);
         setSelectedStock("");
     }).catch(err=>console.log(err))
-  }
+  };
+
+  var handleHistory = () =>{
+    fetch("http://localhost:4000/history?selectedstock="+selectedStock)
+    .then(resp => resp.json()).then(resp=>{
+        setListOfHistory(resp.message)
+    }).catch(err=>console.log(err))
+  };
 
   var handleFavorite = () =>{
     console.log("Handling favorite")
@@ -199,19 +209,20 @@ function App() {
     }else{
       setfavorites(favorites => [...favorites, selectedStock])
     }
-  }
+  };
 
   React.useEffect(() => {
     handleFilter(handleFilterOut);
-  }, [checkPublishing]);
+  }, [checkPublishing, checkEntertainment]);
 
   return (
       <div className="App">
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-      <Dialog onClose={()=>{handleVisit() }} fullWidth maxWidth="500px" aria-labelledby="simple-dialog-title" open={selectedStock}>
+      <Dialog onOpen={handleHistory} onClose={()=>{handleVisit() }} fullWidth maxWidth="500px" aria-labelledby="simple-dialog-title" open={selectedStock}>
         <div  className={classes.dialogPaper}>
-         <DialogTitle id="simple-dialog-title">I dont know what jiyu wants here, I just know he is a retard who clicked {selectedStock}.</DialogTitle>
+         <DialogTitle id="simple-dialog-title">{selectedStock} History Price: </DialogTitle>
+          <LineChart data={listOfHistory} />
          <Button variant="outlined" color="primary" onClick={handleFavorite} className={classes.likeButton} >
           {favorites.indexOf(selectedStock) !== -1 ? <Icon color="primary">favorite</Icon> : <Icon color="primary">favorite_border</Icon>}
          </Button>
@@ -269,7 +280,7 @@ function App() {
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                       }
-                      label="Publishing"
+                      label="Airlines"
                     />
                   </ListItem>
                   <ListItem button className={classes.nested}>
@@ -281,7 +292,7 @@ function App() {
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                       }
-                      label="Entertainment"
+                      label="Insurance-Life"
                     />
 
                   </ListItem>
@@ -299,15 +310,9 @@ function App() {
           {listOfStock.map(item => {
             return (
               <ListItem button onClick={()=>{setSelectedStock(item.symbol)}}>
-                {item.symbol + "(" + item.company + ")"}
-                {"Today's price:" + item.Price}
-                {item.ListOfHistoryPrice.map(historyItem => {
-                  return (
-                    <ListItem>
-                      {historyItem.price}
-                    </ListItem>
-                  )
-                })}
+                {" Symbol: " + item.symbol}
+                {" Industry: " + item.industry}
+                {" Price: " + item.market_price}
               </ListItem>
             )
           })}
