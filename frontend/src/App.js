@@ -26,6 +26,7 @@ import Icon from '@material-ui/core/Icon';
 
 function App() {
 
+
   const sampleListOfStock = [
     {
       symbol: "AAPL",
@@ -64,7 +65,7 @@ function App() {
       ]
     }
   ]
-  const sampleLikeStock = [
+  const sampleRecommendStock = [
     {
       symbol: "FUCK",
       Price: "5.0"
@@ -86,20 +87,19 @@ function App() {
     Price: "5.0"
   }
   ]
-  const sampleRecentView = [{symbol:"a"}, {symbol:"b"}, {symbol:"c"}, {symbol:"d"}];
-  const sampleFavourites = [{symbol:"AAPL"}, {symbol:"NVDA"}, {symbol:"ORCL"}];
+  const sampleRecentView = ["AAPL"];
 
   const [shit, setShit] = useState("I am shit");
   const [openRecent, setOpenRecent] = React.useState(false);
   const [recentView, setRecentView] = React.useState(sampleRecentView);
-  const [openFavourites, setOpenFavourites] = React.useState(false);
-  const [favourites, setFavourites] = React.useState(sampleFavourites);
+  const [openfavorites, setOpenfavorites] = React.useState(false);
+  const [favorites, setfavorites] = React.useState([]);
   const [openIndustry, setOpenIndustry] = React.useState(false);
   const [checkPublishing, setCheckPublishing] = React.useState(false);
   const [checkEntertainment, setCheckEntertainment] = React.useState(false);
   const [selectedStock, setSelectedStock] = React.useState("");
   const [listOfStock, setListOfStock] = React.useState(sampleListOfStock);
-  const [likeStock, setLikeStock] = React.useState(sampleLikeStock);
+  const [recommendStock, setRecommendStock] = React.useState(sampleRecommendStock);
   const [inputUsername, setInputUsername] = React.useState("");
   const [inputPassword, setInputPassword] = React.useState("");
   const [inputSearch, setInputSearch] = React.useState("");
@@ -136,6 +136,13 @@ function App() {
     },
     comfirm: {
       height: 55
+    },
+    likeButton: {
+      top: -50,
+      left: "90%",
+    },
+    dialogPaper: {
+      height: 300
     }
   }));
   const classes = useStyles();
@@ -185,6 +192,15 @@ function App() {
     }).catch(err=>console.log(err))
   }
 
+  var handleFavorite = () =>{
+    console.log("Handling favorite")
+    if (favorites.indexOf(selectedStock) !== -1){
+      setfavorites(favorites.filter(item => item !== selectedStock))
+    }else{
+      setfavorites(favorites => [...favorites, selectedStock])
+    }
+  }
+
   React.useEffect(() => {
     handleFilter(handleFilterOut);
   }, [checkPublishing]);
@@ -193,9 +209,13 @@ function App() {
       <div className="App">
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-      <Dialog onClose={()=>{handleVisit() }} aria-labelledby="simple-dialog-title" open={selectedStock}>
+      <Dialog onClose={()=>{handleVisit() }} fullWidth maxWidth="500px" aria-labelledby="simple-dialog-title" open={selectedStock}>
+        <div  className={classes.dialogPaper}>
          <DialogTitle id="simple-dialog-title">I dont know what jiyu wants here, I just know he is a retard who clicked {selectedStock}.</DialogTitle>
-
+         <Button variant="outlined" color="primary" onClick={handleFavorite} className={classes.likeButton} >
+          {favorites.indexOf(selectedStock) !== -1 ? <Icon color="primary">favorite</Icon> : <Icon color="primary">favorite_border</Icon>}
+         </Button>
+         </div>
        </Dialog>
 
       <Grid container spacing={3}>
@@ -245,7 +265,7 @@ function App() {
                       control={
                         <Checkbox
                           checked={checkPublishing}
-                          onChange={() => {setCheckPublishing(!checkPublishing); }}
+                          onChange={() => {setCheckPublishing(!checkPublishing) }}
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                       }
@@ -312,23 +332,23 @@ function App() {
                <List component="div" disablePadding>
                  {recentView.map(item => {
                    return (
-                     <ListItem button className={classes.nested}>
-                       <ListItemText primary={item.symbol} />
+                     <ListItem button onClick={()=>{setSelectedStock(item)}} className={classes.nested}>
+                       <ListItemText primary={item} />
                      </ListItem>
                    )
                  })}
                </List>
              </Collapse>
-             <ListItem button onClick={() => {setOpenFavourites(!openFavourites)}}>
-               <ListItemText primary="Favourites" />
-               {openFavourites ? <ExpandLess /> : <ExpandMore />}
+             <ListItem button onClick={() => {setOpenfavorites(!openfavorites)}}>
+               <ListItemText primary="favorites" />
+               {openfavorites ? <ExpandLess /> : <ExpandMore />}
              </ListItem>
-             <Collapse in={openFavourites} timeout="auto" unmountOnExit>
+             <Collapse in={openfavorites} timeout="auto" unmountOnExit>
                <List component="div" disablePadding>
-                 {favourites.map(item => {
+                 {favorites.map(item => {
                    return (
-                     <ListItem button className={classes.nested}>
-                       <ListItemText primary={item.symbol} />
+                     <ListItem button onClick={()=>{setSelectedStock(item)}} className={classes.nested}>
+                       <ListItemText primary={item} />
                      </ListItem>
                    )
                  })}
@@ -345,43 +365,43 @@ function App() {
 
         <Grid item className={classes.griditem} xs={1}/>
 
-        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(likeStock[0].symbol)}}>
+        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(recommendStock[0].symbol)}}>
         <Paper >
           <div className={classes.bottomblock}>
-          {likeStock[0].symbol}
-          {likeStock[0].Price}
+          {recommendStock[0].symbol}
+          {recommendStock[0].Price}
           </div>
         </Paper>
         </Grid>
-        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(likeStock[1].symbol)}}>
+        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(recommendStock[1].symbol)}}>
         <Paper >
           <div className={classes.bottomblock}>
-          {likeStock[1].symbol}
-          {likeStock[1].Price}
+          {recommendStock[1].symbol}
+          {recommendStock[1].Price}
           </div>
         </Paper>
         </Grid>
-        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(likeStock[2].symbol)}}>
+        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(recommendStock[2].symbol)}}>
         <Paper>
           <div className={classes.bottomblock}>
-          {likeStock[2].symbol}
-          {likeStock[2].Price}
+          {recommendStock[2].symbol}
+          {recommendStock[2].Price}
           </div>
         </Paper>
         </Grid>
-        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(likeStock[3].symbol)}}>
+        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(recommendStock[3].symbol)}}>
         <Paper>
           <div className={classes.bottomblock}>
-          {likeStock[3].symbol}
-          {likeStock[3].Price}
+          {recommendStock[3].symbol}
+          {recommendStock[3].Price}
           </div>
         </Paper>
         </Grid>
-        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(likeStock[4].symbol)}}>
+        <Grid item className={classes.bottomblock} xs={2} button onClick= {()=>{setSelectedStock(recommendStock[4].symbol)}}>
         <Paper>
           <div className={classes.bottomblock}>
-          {likeStock[4].symbol}
-          {likeStock[4].Price}
+          {recommendStock[4].symbol}
+          {recommendStock[4].Price}
           </div>
         </Paper>
         </Grid>

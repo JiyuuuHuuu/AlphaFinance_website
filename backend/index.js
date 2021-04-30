@@ -5,7 +5,6 @@ app.use(cors())
 
 //TODO: you need to configure how to connect to DB here.
 
-
 app.get('/login', (req, res) => {
   console.log("I am about to login", req.query["username"])
   // TODO: please finish this part
@@ -13,13 +12,7 @@ app.get('/login', (req, res) => {
   return res.json({message: req.query["username"]});
 })
 
-app.get('/search', (req, res) => {
-  console.log("I am about to search", req.query["searchquery"])
-  // TODO: please finish this part
-  // Update the list of query with the search keywords
 
-  return res.json({message: sampleUpdatedListOfStock});
-})
 
 app.get('/visit', (req, res) => {
   console.log("I am about to visit", req.query["selectedStock"])
@@ -30,12 +23,12 @@ app.get('/visit', (req, res) => {
 })
 
 app.get('/filter', (req, res) => {
-  console.log("I am about to filter", req.query["filterList"])
+  console.log("I am about to filtered", req.query["filterList"])
   // TODO: please finish this part
   // Return the filtered recent view list
   const sampleUpdatedListOfStock = [
     {
-      symbol: "filtered",
+      symbol: "AAPL",
       company: "Apple",
       Price: "5.0",
       ListOfHistoryPrice:[
@@ -74,6 +67,19 @@ app.get('/filter', (req, res) => {
   return res.json({message: sampleUpdatedListOfStock});
 })
 
+app.get('/search', (req, res) => {
+  console.log("I am about to search", req.query["searchquery"])
+  // TODO: please finish this part
+  // Update the list of query with the search keywords
+  if (req.query["searchquery"].length == 0){
+    // If it is initailization, send back a string message
+    return res.json({message: "initailization"});
+  }else{
+    // Else send
+    return res.json({message: sampleUpdatedListOfStock});
+  }
+
+})
 
 app.listen(4000, ()=>{
   console.log("backend listening on 4000")
